@@ -19,6 +19,12 @@ int main() {
     int linhaVertical = 5;    // linha inicial do navio vertical
     int colunaVertical = 7;   // coluna inicial do navio vertical
 
+     // Variáveis para navios diagonais (nível aventureiro)
+    int linhaDiagonal1 = 0;   // linha inicial do navio diagonal principal (↘)
+    int colunaDiagonal1 = 0;  // coluna inicial do navio diagonal principal (↘)
+    int linhaDiagonal2 = 0;   // linha inicial do navio diagonal secundário (↙)
+    int colunaDiagonal2 = 9;  // coluna inicial do navio diagonal secundário (↙)
+
     // Tamanho fixo dos navios (3 posições)
     int tamanhoNavio = 3;
 
@@ -29,6 +35,7 @@ int main() {
             tabuleiro[i][j] = 0;
         }
     }
+    
     // ---------- Interação com o Usuário ----------
     printf("=== POSICIONAMENTO DOS NAVIOS ===\n");
     printf("Digite a linha e a coluna iniciais do navio HORIZONTAL (0 a 9): ");
@@ -37,7 +44,14 @@ int main() {
     printf("Digite a linha e a coluna iniciais do navio VERTICAL (0 a 9): ");
     scanf("%d %d", &linhaVertical, &colunaVertical);
 
-    // ---------- Posicionamento do Navio Horizontal ----------
+    // Interação adicional para o nível aventureiro
+    printf("Digite a linha e a coluna iniciais do navio DIAGONAL PRINCIPAL (↘) (0 a 9): ");
+    scanf("%d %d", &linhaDiagonal1, &colunaDiagonal1);
+
+    printf("Digite a linha e a coluna iniciais do navio DIAGONAL SECUNDÁRIA (↙) (0 a 9): ");
+    scanf("%d %d", &linhaDiagonal2, &colunaDiagonal2);
+
+      // ---------- Posicionamento do Navio Horizontal ----------
     // O navio ocupa 3 colunas na mesma linha
     for (int i = 0; i < tamanhoNavio; i++) {
         if (colunaHorizontal + i < 10) // garante que o navio cabe no tabuleiro
@@ -50,7 +64,19 @@ int main() {
             tabuleiro[linhaVertical + i][colunaVertical] = 3;
     }
 
-    // ---------- Exibição do Tabuleiro ----------
+    // ---------- Posicionamento do Navio Diagonal Principal (↘) ----------
+    for (int i = 0; i < tamanhoNavio; i++) {
+        if (linhaDiagonal1 + i < 10 && colunaDiagonal1 + i < 10)
+            tabuleiro[linhaDiagonal1 + i][colunaDiagonal1 + i] = 3;
+    }
+
+     // ---------- Posicionamento do Navio Diagonal Secundária (↙) ----------
+    for (int i = 0; i < tamanhoNavio; i++) {
+        if (linhaDiagonal2 + i < 10 && colunaDiagonal2 - i >= 0)
+            tabuleiro[linhaDiagonal2 + i][colunaDiagonal2 - i] = 3;
+    }
+
+     // ---------- Exibição do Tabuleiro ----------
     printf("=== TABULEIRO BATALHA NAVAL ===\n\n");
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
@@ -58,14 +84,13 @@ int main() {
         }
         printf("\n");
     }
-     printf("\nLegenda: 0 = Água | 3 = Navio\n");
-    printf("Navio Horizontal: linha %d, coluna %d\n", linhaHorizontal, colunaHorizontal);
-    printf("Navio Vertical: linha %d, coluna %d\n", linhaVertical, colunaVertical);
-     // ---------- Interação após a Exibição ----------
     printf("\nLegenda: 0 = Água | 3 = Navio\n");
     printf("Navio Horizontal: linha %d, coluna %d\n", linhaHorizontal, colunaHorizontal);
     printf("Navio Vertical: linha %d, coluna %d\n", linhaVertical, colunaVertical);
+    printf("Navio Diagonal ↘: linha %d, coluna %d\n", linhaDiagonal1, colunaDiagonal1);
+    printf("Navio Diagonal ↙: linha %d, coluna %d\n", linhaDiagonal2, colunaDiagonal2);
 
+ // ---------- Interação após a Exibição ----------
     printf("\nDeseja reposicionar os navios? (1 - Sim / 0 - Não): ");
     int opcao;
     scanf("%d", &opcao);
@@ -77,6 +102,41 @@ int main() {
                 tabuleiro[i][j] = 0;
             }
         }
+
+        // Reposicionamento interativo
+        printf("\nDigite novamente a linha e a coluna iniciais do navio HORIZONTAL: ");
+        scanf("%d %d", &linhaHorizontal, &colunaHorizontal);
+
+        printf("Digite novamente a linha e a coluna iniciais do navio VERTICAL: ");
+        scanf("%d %d", &linhaVertical, &colunaVertical);
+
+        printf("Digite novamente a linha e a coluna iniciais do navio DIAGONAL PRINCIPAL (↘): ");
+        scanf("%d %d", &linhaDiagonal1, &colunaDiagonal1);
+
+        printf("Digite novamente a linha e a coluna iniciais do navio DIAGONAL SECUNDÁRIA (↙): ");
+        scanf("%d %d", &linhaDiagonal2, &colunaDiagonal2);
+
+        // Reposicionamento
+        for (int i = 0; i < tamanhoNavio; i++) {
+            if (colunaHorizontal + i < 10)
+                tabuleiro[linhaHorizontal][colunaHorizontal + i] = 3;
+            if (linhaVertical + i < 10)
+                tabuleiro[linhaVertical + i][colunaVertical] = 3;
+            if (linhaDiagonal1 + i < 10 && colunaDiagonal1 + i < 10)
+                tabuleiro[linhaDiagonal1 + i][colunaDiagonal1 + i] = 3;
+            if (linhaDiagonal2 + i < 10 && colunaDiagonal2 - i >= 0)
+                tabuleiro[linhaDiagonal2 + i][colunaDiagonal2 - i] = 3;
+        }
+
+        // Exibe novamente o tabuleiro
+        printf("\n=== NOVO TABULEIRO ===\n\n");
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                printf("%d ", tabuleiro[i][j]);
+            }
+            printf("\n");
+        }
+    }
 
 
     // Nível Aventureiro - Expansão do Tabuleiro e Posicionamento Diagonal
