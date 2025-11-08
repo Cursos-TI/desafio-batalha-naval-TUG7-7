@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>  // Necessário para usar a função abs() em C
 
 // Desafio Batalha Naval - MateCheck
 // Este código inicial serve como base para o desenvolvimento do sistema de Batalha Naval.
@@ -90,53 +91,61 @@ int main() {
     printf("Navio Diagonal ↘: linha %d, coluna %d\n", linhaDiagonal1, colunaDiagonal1);
     printf("Navio Diagonal ↙: linha %d, coluna %d\n", linhaDiagonal2, colunaDiagonal2);
 
- // ---------- Interação após a Exibição ----------
-    printf("\nDeseja reposicionar os navios? (1 - Sim / 0 - Não): ");
-    int opcao;
-    scanf("%d", &opcao);
+  // ---------- Interação após a Exibição ----------
+    int opcaoHabilidade;
+    printf("\nEscolha uma habilidade para aplicar:\n");
+    printf("1 - Cone\n2 - Cruz\n3 - Octaedro\n");
+    printf("Opção: ");
+    scanf("%d", &opcaoHabilidade);
 
-    if (opcao == 1) {
-        // Limpa o tabuleiro
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                tabuleiro[i][j] = 0;
+    // ---------- Nível Mestre - Habilidades Especiais ----------
+    int habilidade[5][5];
+
+    // Preenche a matriz de habilidade conforme a escolha
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            habilidade[i][j] = 0;
+
+            if (opcaoHabilidade == 1) { // Cone
+                if (i >= j - 2 && i >= 2 - j) habilidade[i][j] = 1;
+            } else if (opcaoHabilidade == 2) { // Cruz
+                if (i == 2 || j == 2) habilidade[i][j] = 1;
+            } else if (opcaoHabilidade == 3) { // Octaedro
+                if (abs(i - 2) + abs(j - 2) <= 2) habilidade[i][j] = 1;
             }
-        }
-
-        // Reposicionamento interativo
-        printf("\nDigite novamente a linha e a coluna iniciais do navio HORIZONTAL: ");
-        scanf("%d %d", &linhaHorizontal, &colunaHorizontal);
-
-        printf("Digite novamente a linha e a coluna iniciais do navio VERTICAL: ");
-        scanf("%d %d", &linhaVertical, &colunaVertical);
-
-        printf("Digite novamente a linha e a coluna iniciais do navio DIAGONAL PRINCIPAL (↘): ");
-        scanf("%d %d", &linhaDiagonal1, &colunaDiagonal1);
-
-        printf("Digite novamente a linha e a coluna iniciais do navio DIAGONAL SECUNDÁRIA (↙): ");
-        scanf("%d %d", &linhaDiagonal2, &colunaDiagonal2);
-
-        // Reposicionamento
-        for (int i = 0; i < tamanhoNavio; i++) {
-            if (colunaHorizontal + i < 10)
-                tabuleiro[linhaHorizontal][colunaHorizontal + i] = 3;
-            if (linhaVertical + i < 10)
-                tabuleiro[linhaVertical + i][colunaVertical] = 3;
-            if (linhaDiagonal1 + i < 10 && colunaDiagonal1 + i < 10)
-                tabuleiro[linhaDiagonal1 + i][colunaDiagonal1 + i] = 3;
-            if (linhaDiagonal2 + i < 10 && colunaDiagonal2 - i >= 0)
-                tabuleiro[linhaDiagonal2 + i][colunaDiagonal2 - i] = 3;
-        }
-
-        // Exibe novamente o tabuleiro
-        printf("\n=== NOVO TABULEIRO ===\n\n");
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                printf("%d ", tabuleiro[i][j]);
-            }
-            printf("\n");
         }
     }
+
+    // Define ponto de origem no tabuleiro (centro aproximado)
+    int origemLinha = 4;
+    int origemColuna = 4;
+
+    // Sobrepõe a habilidade ao tabuleiro (marca com 5)
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            if (habilidade[i][j] == 1) {
+                int linhaTab = origemLinha + (i - 2);
+                int colunaTab = origemColuna + (j - 2);
+                if (linhaTab >= 0 && linhaTab < 10 && colunaTab >= 0 && colunaTab < 10) {
+                    if (tabuleiro[linhaTab][colunaTab] == 0)
+                        tabuleiro[linhaTab][colunaTab] = 5;
+                }
+            }
+        }
+    }
+
+    // Exibe o tabuleiro atualizado com a habilidade
+    printf("\n=== TABULEIRO COM HABILIDADE ===\n\n");
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            printf("%d ", tabuleiro[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("\nLegenda: 0 = Água | 3 = Navio | 5 = Área de Habilidade\n");
+
+
 
 
     // Nível Aventureiro - Expansão do Tabuleiro e Posicionamento Diagonal
